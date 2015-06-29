@@ -18,13 +18,16 @@ https://github.com/flailingsquirrel/gdb-plot
     - example cpp provided has several buffers you can plot:
 
     - raw pointer array (must specify end):
-    plot d --end 1024
+    plot d@1024
 
     - stl vector
     plot z
 
     - fixed length array
-    plot d
+    plot e
+
+    - plot several:
+    plot e z d@1024
 
 = Known Issues =
 
