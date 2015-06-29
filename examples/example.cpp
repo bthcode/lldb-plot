@@ -68,7 +68,8 @@ int main(void)
               << "Break on line " <<  __LINE__ << " to plot: \n"
               << " plot d@1024: malloc'd pointer\n"
               << " plot e@1024: c stack array\n"
-              << " plot x@1024: c complex double malloc'd pointer\n"
+              << " plot x@1024: c complex double malloc'd pointer (not currently supported)\n"
+              << " plot z stl vector of integers\n"
               << std::endl;
 
     std::cout << " .. Now try combined plots: plot d 1024 e 1024 " << std::endl;

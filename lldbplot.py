@@ -1,12 +1,35 @@
 #!/usr/bin/env python
 
+'''
+Script to plot data from lldb
+
+Requires: numpy + matplotlib
+
+USAGE: plot var1 var2 var3@1024
+
+    - NOTE: var3@1024 = plot first 1024 elements
+            -- this syntax is required for pointer arrays
+
+License:
+    - Do whatever you want with this and don't blame me
+
+TODO:
+    - modularize 
+        - make a 'get data for variable' library
+        - plot should call that and then plot
+        - add save to mat file
+    - formalize type support
+        - right now only double, float int
+        - add the rest of the basic types
+        - should we allow the caller to specify the cast to python type?
+        - support complex data
+'''
+
 #----------------------------------------------------------------------
 # Be sure to add the python path that points to the LLDB shared library.
 #
-# # To use this in the embedded python interpreter using "lldb" just
-# import it with the full path using the "command script import" 
-# command
-#   (lldb) command script import /path/to/cmdtemplate.py
+# To use from lldb:
+#   (lldb) command script import /path/to/lldbplot.py
 #----------------------------------------------------------------------
 
 import lldb
@@ -24,10 +47,24 @@ Plotter for lldb.
 Handles std::vector, static array, pointer array
 '''
     parser = optparse.OptionParser(description=description, prog='plot',usage=usage)
-    parser.add_option('--start', action='store', type=int, default=0)
-    parser.add_option('--end', action='store', type=int)
     return parser
 # end create_framestats_options
+
+def idxs_from_arg(arg):
+    ''' return key, start, end from:
+    key@end
+    key
+    '''
+    key   = arg
+    start = 0
+    end   = -1
+    
+    # split on @ to get idxs
+    if arg.find( "@" ) >= 0:
+        key, end = arg.split("@")
+        end = int(end)
+    return key, end 
+# end idx_from_arg
 
 def lldb_plot_command(debugger, command, result, internal_dict):
     
@@ -53,6 +90,8 @@ def lldb_plot_command(debugger, command, result, internal_dict):
     thread = process.GetSelectedThread()
     frame = thread.GetSelectedFrame()
 
+    legend = []
+
     for arg in args:
     #--------------------------
     # Now, guess the type
@@ -64,6 +103,12 @@ def lldb_plot_command(debugger, command, result, internal_dict):
     #   'double', 'doubles', 'float', 'floats', 'read_data_helper', 'sint16', 'sint16s', 'sint32', 'sint32s', 'sint64', 'sint64s', 'sint8', 'sint8s', 'size', 'this', 'uint16', 'uint16s', 'uint32', 'uint32s', 'uint64', 'uint64s', 'uint8', 'uint8s'
     #--------------------------
         print (arg)
+        try:
+            arg, end = idxs_from_arg(arg)
+        except:
+            result.SetError("Unable to parse argument: {0}, formats are: var, var@end_idx".format(arg))
+            return
+        print ( arg, end )
         x = frame.FindVariable(arg)
         # check for valid var
         if not x.is_in_scope:
@@ -124,10 +169,10 @@ def lldb_plot_command(debugger, command, result, internal_dict):
                 result.SetError('{0}: unknown type'.format(base_type_name))
                 return
         elif data_type_name == 'pointer array':
-            if not options.end:
-                result.SetError('Need end for pointer array')
+            if end == -1:
+                result.SetError('Need end for pointer array, try {0}@end_idx'.format(arg))
                 return
-            dd = x.GetPointeeData(options.start,options.end)
+            dd = x.GetPointeeData(0,end)
             if base_type_name == 'double':
                 data = dd.doubles
             elif base_type_name == 'float':
@@ -143,6 +188,9 @@ def lldb_plot_command(debugger, command, result, internal_dict):
 
         data = np.array(data)
         plt.plot(data)
+        legend.append(arg)
+        # end for each arg
+    plt.legend(legend)
     plt.show()
     return
 
@@ -153,7 +201,10 @@ def __lldb_init_module (debugger, internal_dict):
 
     # Set up command line
     parser = create_plotter_options()
-    lldb_plot_command.__doc__ = parser.format_help()
+    lldb_plot_command.__doc__ = '''plot var1 var2@1024, var3
+
+  - var2@1024 - plot 1024 elements from var2 (note - this is required for pointer arrays)
+'''
 
     # Add any commands contained in this module to LLDB
     debugger.HandleCommand('command script add -f lldbplot.lldb_plot_command plot')
