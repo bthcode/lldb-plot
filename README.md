@@ -1,7 +1,7 @@
 # lldb-plot
 Plotting Utilities for LLDB
 
-This is a basic set of commands for plotting from lldb. 
+This is a basic set of commands for plotting from lldb. It also includes the ability to save arbitary buffers to mat files.
 
 For a more mature set of plotting utilities for gdb, see:
 
@@ -28,6 +28,13 @@ https://github.com/flailingsquirrel/gdb-plot
 
     - plot several:
     plot e z d@1024
+
+- save to mat file
+
+    savemat <matfile> buf1 buf2 buf3...
+
+    example:
+        savemat mat_out d@1024 e z
 
 = Known Issues =
 
