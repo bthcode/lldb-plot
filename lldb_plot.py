@@ -14,10 +14,6 @@ License:
     - Do whatever you want with this and don't blame me
 
 TODO:
-    - modularize 
-        - make a 'get data for variable' library
-        - plot should call that and then plot
-        - add save to mat file
     - formalize type support
         - right now only double, float int
         - add the rest of the basic types

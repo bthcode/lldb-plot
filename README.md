@@ -11,7 +11,11 @@ https://github.com/flailingsquirrel/gdb-plot
 
 - import the module::
 
-    command script import ../lldbplot.py
+    - plotter:
+        command script import lldb_plot.py
+
+    - mat file writer:
+        command script import lldb_savemat.py
 
 - plot stuff
 

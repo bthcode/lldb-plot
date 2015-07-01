@@ -1,11 +1,9 @@
 #!/usr/bin/env python
 
 '''
-Script to plot data from lldb
+Script to save buffers to mat files
 
-Requires: numpy + matplotlib
-
-USAGE: plot var1 var2 var3@1024
+USAGE: savemat matfile var1 var2 var3@1024
 
     - NOTE: var3@1024 = plot first 1024 elements
             -- this syntax is required for pointer arrays
@@ -14,10 +12,6 @@ License:
     - Do whatever you want with this and don't blame me
 
 TODO:
-    - modularize 
-        - make a 'get data for variable' library
-        - plot should call that and then plot
-        - add save to mat file
     - formalize type support
         - right now only double, float int
         - add the rest of the basic types
@@ -72,7 +66,7 @@ def lldb_savemat_command(debugger, command, result, internal_dict):
     sio.savemat(matfile, d)
 
     return
-# end
+# end lldb_savemat_command
 
 def __lldb_init_module (debugger, internal_dict):
 
@@ -85,3 +79,4 @@ def __lldb_init_module (debugger, internal_dict):
     # Add any commands contained in this module to LLDB
     debugger.HandleCommand('command script add -f lldb_savemat.lldb_savemat_command savemat')
     print 'The "savemat" command has been installed, type "help savemat" or "savemat --help" for detailed help.'
+# end __lldb_init_module
