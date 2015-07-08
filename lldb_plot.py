@@ -25,7 +25,7 @@ TODO:
 # Be sure to add the python path that points to the LLDB shared library.
 #
 # To use from lldb:
-#   (lldb) command script import /path/to/lldbplot.py
+#   (lldb) command script import /path/to/lldb_plot.py
 #----------------------------------------------------------------------
 
 import lldb
@@ -68,5 +68,5 @@ def __lldb_init_module (debugger, internal_dict):
 '''
 
     # Add any commands contained in this module to LLDB
-    debugger.HandleCommand('command script add -f lldbplot.lldb_plot_command plot')
+    debugger.HandleCommand('command script add -f lldb_plot.lldb_plot_command plot')
     print 'The "plot" command has been installed, type "help plot" or "plot --help" for detailed help.'

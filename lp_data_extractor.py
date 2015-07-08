@@ -11,6 +11,8 @@ import shlex
 import matplotlib.pyplot as plt
 import numpy as np
 
+lp_debug = False
+
 
 def idxs_from_arg(arg):
     ''' return key, start, end from:
@@ -54,7 +56,7 @@ def lp_get_data(debugger, args, result, internal_dict):
     ret_data = []
 
     for arg in args:
-        if debug: print (arg)
+        if lp_debug: print (arg)
 
         #---------------------------------
         # Parse the arg into variable
@@ -66,7 +68,7 @@ def lp_get_data(debugger, args, result, internal_dict):
         except:
             result.SetError("Unable to parse argument: {0}, formats are: var, var@end_idx".format(arg))
             return None, None
-        if debug: print ( arg, end )
+        if lp_debug: print ( arg, end )
 
         #---------------------------------
         # Find the variable in question
@@ -92,7 +94,7 @@ def lp_get_data(debugger, args, result, internal_dict):
         #     - double
         #---------------------------------------------
         type_name = x.type.name
-        if debug: print ("type_name = {0}".format(type_name))
+        if lp_debug: print ("type_name = {0}".format(type_name))
         if type_name.find( 'vector' ) >= 0:
             tmp = x.GetChildAtIndex(0)
             data_type_name = 'vector'
@@ -104,8 +106,8 @@ def lp_get_data(debugger, args, result, internal_dict):
             data_type_name = 'pointer array'
             base_type_name = x.type.GetPointeeType().name
 
-        if debug: print (data_type_name)
-        if debug: print (base_type_name)
+        if lp_debug: print (data_type_name)
+        if lp_debug: print (base_type_name)
 
         supported = ['double','float','int']
         if base_type_name not in supported:
