@@ -7,6 +7,13 @@ For a more mature set of plotting utilities for gdb, see:
 
 https://github.com/flailingsquirrel/gdb-plot
 
+NOTE FOR Mac OS X Users:
+=======================
+
+Apple integrates a busted old python.  If you install a newer python version, set your PYTHONHOME environment variable.  Example:
+
+export PYTHONHOME=~/anaconda/
+
 = HOWTO = 
 
 - import the module::
